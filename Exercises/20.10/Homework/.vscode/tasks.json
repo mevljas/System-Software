@@ -3,10 +3,8 @@
         {
             "type": "shell",
             "label": "C/C++: gcc build active file",
-            "command": "/usr/bin/gcc-9",
+            "command": "/usr/bin/gcc",
             "args": [
-                "-Wall",
-                "-stdi=c99",
                 "-g",
                 "${file}",
                 "-o",
