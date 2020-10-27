@@ -20,7 +20,7 @@
 void main(int argc, char *argv[])
 {
     int fd, offset, desired_number_of_rows, number_of_rows;
-    int bytes_read, bytes_written;
+    ssize_t bytes_read, bytes_written;
     char buf[BUFSIZE];
     char filename[1];
 

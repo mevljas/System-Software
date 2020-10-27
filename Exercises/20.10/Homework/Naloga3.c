@@ -29,7 +29,7 @@ Test programa:
 void main(int argc, char *argv[])
 {
     int fd1, fd2, offset;
-    int bytes_read, bytes_written;
+    ssize_t bytes_read, bytes_written;
     char buf[BUFSIZE];
 
 if (argc == 3)

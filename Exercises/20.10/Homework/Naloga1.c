@@ -23,7 +23,7 @@ Pred kopiranjem preverite
 void main(int argc, char *argv[])
 {
     int fd1, fd2;
-    int bytes_read, bytes_written;
+    ssize_t bytes_read, bytes_written;
     char buf[BUFSIZE];
 
     if (argc == 3)
@@ -36,7 +36,7 @@ void main(int argc, char *argv[])
         }
 
         // open target file
-        if ((fd2 = open(argv[2], O_WRONLY | O_CREAT | O_TRUNC)) == -1)
+        if ((fd2 = open(argv[2], O_WRONLY | O_CREAT | O_TRUNC, 0777)) == -1)
         {
             perror("Ciljna datoteka (argument 2)");
             exit(1);

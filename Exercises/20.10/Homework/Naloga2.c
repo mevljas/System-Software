@@ -22,13 +22,13 @@ Naloga 2
 void main(int argc, char *argv[])
 {
     int fd;
-    int bytes_read, bytes_written;
+    ssize_t bytes_read, bytes_written;
     char buf[BUFFSIZE];
 
     if (argc > 1)
     {
         // Read files.
-        for (int i = 0; i < argc; i++)
+        for (int i = 1; i < argc; i++)
         {
             // Open source file
             if ((fd = open(argv[i], O_RDONLY)) == -1)
@@ -37,22 +37,24 @@ void main(int argc, char *argv[])
                 exit(1);
             }
 
-            // Read data
-            if ((bytes_read = read(fd, buf, BUFFSIZE)) < 0)
+            while((bytes_read = read(fd, buf, BUFFSIZE)) != 0)
             {
-                perror("read");
-                exit(1);
+                // Read data
+                if(bytes_read < 0)
+                {
+                    perror("read");
+                    exit(1);
+                }
+                // Write data
+                // printf(buf);
+                if ((bytes_written = write(STDOUT_FILENO, buf, bytes_read)) != bytes_read)
+                {
+                    perror("write");
+                    exit(1);
+                }
             }
-                
 
-            // Write data
-            // printf(buf);
-            if ((bytes_written = write(STDOUT_FILENO, buf, bytes_read)) != bytes_read)
-            {
-                perror("write");
-                exit(1);
-            }
-            
+        
 
             close(fd);
         }
