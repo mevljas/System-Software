@@ -1,4 +1,4 @@
-// Funkcije open, close; kostante, ki jih uporaibmo pri open(): O_RDONLY, O_WRONLY, O_RDWR; O_APPEND, O_CREAT, O_ECL, O_TRUNC, O_SYNC 
+// Funkcije open, close; kostante, ki jih uporaibmo pri open(): O_RDONLY, O_WRONLY, O_RDWR; O_APPEND, O_CREAT, O_ECL, O_TRUNC, O_SYNC
 #include <fcntl.h>
 // veliko unix sistemskih klicev: read, write, lčseek, fork, chdir, chown, ...
 #include <unistd.h>
@@ -29,44 +29,41 @@ void main(int argc, char *argv[])
     if (argc == 3)
     {
         // Open source file
-        if ( (fd1 = open(argv[1], O_RDONLY)) == -1)
+        if ((fd1 = open(argv[1], O_RDONLY)) == -1)
         {
             perror("Izvorna datoteka (argument 1)");
             exit(1);
-        
         }
 
         // open target file
-        if ( (fd2 = open(argv[2], O_WRONLY | O_CREAT | O_TRUNC)) == -1)
+        if ((fd2 = open(argv[2], O_WRONLY | O_CREAT | O_TRUNC)) == -1)
         {
             perror("Ciljna datoteka (argument 2)");
             exit(1);
-        
+        }
+
+        // Read data
+        if ((bytes_read = read(fd1, buf, BUFSIZE)) < 0)
+        {
+            perror("read");
+            exit(1);
         }
             
-        // Read data
-        bytes_read = read(fd1, buf, BUFSIZE);
-        if (bytes_read < 0)
-            perror("read");
-        
-        // Write file
-        bytes_written = write(fd2, buf, bytes_read);
-        // Check for erros
-        if (bytes_written != bytes_read)
+
+        // Write data
+        if ((bytes_written = write(fd2, buf, bytes_read)) != bytes_read)
+        {
             perror("write");
+            exit(1);
+        }
+           
 
         close(fd1);
         close(fd2);
     }
-    else 
+    else
     {
         // We can't use perror, because it's not a system call error.
         printf("ERROR: Wrong number of arguments.\n");
     }
-    
-
-    
-
-
-
 }
