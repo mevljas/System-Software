@@ -6,6 +6,8 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 #define BUFSIZE 1024
 #define err(mess) { printf("Error: %s\n", mess); exit(1); }
@@ -16,6 +18,7 @@ void main()
         int listenfd, connfd, n;
         struct sockaddr_in servaddr;
         char buf[BUFSIZE], buf_send[BUFSIZE+100];
+        pid_t childpid;
         
         if ( (listenfd = socket( AF_INET, SOCK_STREAM, 0)) < 0)
                 err("socket")
@@ -34,17 +37,23 @@ void main()
         while(1) {                
                 if ( (connfd = accept( listenfd, (struct sockaddr *)NULL, NULL)) < 0)
                         err("accept")
-                                                
-                while( (n = read( connfd, buf, BUFSIZE)) > 0) {
-                        // buf[n] = '\0';  //treba dodat null termiantor. lahko bi dali tudi samo 0.
-                        buf[n - 1] = '\0';  // namesto '\n'
-                        // Brez null termiantorja ne ve, kje je konec
-                        // procesiranje                        
-                        sprintf( buf_send, "Dobil sem %s.", buf);
-                        if ( write( connfd, buf_send, strlen(buf_send)) != strlen(buf_send))
-                                err("write")
+                
+                if ((childpid = fork()) < 0)
+                        err("fork")
+                else if ( childpid == 0) { // otrok
+                        // to bi lahko dali tudi v funkcijo:
+                        while( (n = read( connfd, buf, BUFSIZE)) > 0) {
+                                buf[n-1] = '\0'; // namesto '\n'
+                                // procesiranje                        
+                                sprintf( buf_send, "Dobil sem %s", buf);
+                                if ( write( connfd, buf_send, strlen(buf_send)) != strlen(buf_send))
+                                        err("write")
+                        }                
+                        exit(0);
                 }
+                                                
                 close(connfd);
+                wait(NULL);
         }
         
 }
