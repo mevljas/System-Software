@@ -1,4 +1,12 @@
 #include <stdio.h>
+#include <errno.h>
+#include <unistd.h>
+#include <string.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+
+#define BUFSIZE 256
 
 
 void parser( char *p, char **args)
@@ -25,14 +33,34 @@ void parser( char *p, char **args)
 
 void main()
 {
-    char niz[] = " abc de \tgh ";
-    char *args[32];
+    pid_t pid;
+    char buf[BUFSIZE];
+    char *args[50];
 
-    parser(niz, args);
+    printf("$ "); // prompt
 
-    for (int i = 0; args[i] != (char *)0; i++)
+    while ( fgets(buf, BUFSIZE, stdin) != NULL)
     {
-        printf("%d: %s\n", i, args[i]);
+        buf[strlen(buf)-1] = '\0';
+        parser( buf, args);
+
+        for (int i = 0; args[i]; i++)
+        {
+            puts(args[i]);
+        }
+        
+
+        if ( (pid = fork()) < 0)
+        {
+            perror("fork");
+        }
+        else if (pid == 0){ //otrok
+            execvp( args[0], args);
+            printf("ne morem izvesti ukaza.\n");
+            exit(127);
+        }
+        
     }
+    
     
 }

@@ -22,7 +22,7 @@ int main(void)
     else {      // otrok
         close(fd[1]);
         n = read (fd[0], line, MAXLINE);
-        // write(STDOUT_FILENO, line, n);
+        write(STDOUT_FILENO, line, n);
     }
     exit(0);
 }
