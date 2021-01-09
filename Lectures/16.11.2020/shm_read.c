@@ -27,7 +27,7 @@ void main()
 
 
     // Detach
-    shmdt( addr);
+    shmdt( addr);   // bi blo treb preverti, ce uspe..
 
     // lahko bi tudi to nrdili
     // shmctl IPC_RMID
